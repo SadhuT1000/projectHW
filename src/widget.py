@@ -13,7 +13,7 @@ def mask_account_card(nums: str) -> str:
         return new_card
 
 
-print(mask_account_card('Maestro 1596837868705199'))
+#print(mask_account_card('Maestro 1596837868705199'))
 
 
 def get_data(date: str) -> str:
@@ -22,4 +22,4 @@ def get_data(date: str) -> str:
     return f"{date[8:10]}.{date[5:7]}.{date[0:4]}"
 
 
-print(get_data('2018-07-11T02:26:18.671407'))
+#print(get_data('2018-07-11T02:26:18.671407'))
