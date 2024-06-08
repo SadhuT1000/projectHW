@@ -6,7 +6,7 @@ def get_mask_card_number(num: str) -> str:
     return new
 
 
-# print(get_mask_card_number(7000792289606361))
+print(get_mask_card_number(str(7000792289606361)))
 
 
 def get_mask_account(num2: str) -> str:
@@ -18,4 +18,4 @@ def get_mask_account(num2: str) -> str:
     return new2
 
 
-# print(get_mask_account(73654108430135874305))
+print(get_mask_account(str(73654108430135874305)))
