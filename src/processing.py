@@ -1,4 +1,3 @@
-# from typing import Union, Any, Optional
 def filter_by_state(inform: list[dict], state: str = "EXECUTED") -> list[dict]:
     """Функция возвращающая список словарей с ключом который введешь"""
 
