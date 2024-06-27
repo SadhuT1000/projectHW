@@ -1,7 +1,4 @@
-
-
 from src.decorators import log
-
 
 # def test_log(capsys):
 #     @log(filename="mylog.txt")
