@@ -1,5 +1,3 @@
-from typing import Any, Dict, List
-
 import pytest
 
 from src.masks import get_mask_card_number
