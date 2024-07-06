@@ -44,10 +44,5 @@ def test_mask_card(x, expected):
         assert get_mask_card_number(card_number="")
 
 
-# @pytest.mark.parametrize('date, expected', '2018-07-11T02:26:18.671407', '11.07.2018')
-# def test_get_data(dates, expected):
-#     assert get_data(dates) == expected
-
-
 def test_dated(dates):
     assert get_data(dates) == "11.07.2018"
