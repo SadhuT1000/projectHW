@@ -46,7 +46,7 @@ def get_mask_card_number(card_number: str) -> str | None:
         masked_account = card_number[:4] + " " + "**" + card_number[-4:]
         auth_logger.debug("Ввод счёта, успешно")
         return masked_account
-    elif "":
+    elif card_number ==  "":
         raise ValueError
         auth_logger.warning("Ошибка ввода")
     return None
@@ -55,6 +55,6 @@ def get_mask_card_number(card_number: str) -> str | None:
 if __name__ == "__main__":
     print(get_mask_card_number(7000792289606361))
 
-    get_mask_card_number(70007922896063615674)
+    print(get_mask_card_number(70007922896063615674))
 
     get_mask_card_number(654583)

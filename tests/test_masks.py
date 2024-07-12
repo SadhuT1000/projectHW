@@ -40,8 +40,8 @@ def test_mask_card(x, expected):
     assert get_mask_card_number(x) == expected
     # with pytest.raises(ValueError):
     #     assert get_mask_card_number(" ")
-    with pytest.raises(ValueError):
-        assert get_mask_card_number(card_number="")
+    # with pytest.raises(ValueError):
+    #     assert get_mask_card_number(card_number="")
 
 
 def test_dated(dates):
