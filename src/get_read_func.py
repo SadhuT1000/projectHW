@@ -4,7 +4,7 @@ import pandas as pd
 
 
 def get_csv(file: str) -> list[dict]:
-    """Функция тения CSV файла и превобразование его в список словарей"""
+    """Функция чтения CSV файла и превобразование его в список словарей"""
 
     with open(file, encoding="utf-8") as file:
         reader = csv.DictReader(file, delimiter=";")
