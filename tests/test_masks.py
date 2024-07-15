@@ -1,5 +1,3 @@
-from typing import Any, Dict, List
-
 import pytest
 
 from src.masks import get_mask_card_number
@@ -42,13 +40,8 @@ def test_mask_card(x, expected):
     assert get_mask_card_number(x) == expected
     # with pytest.raises(ValueError):
     #     assert get_mask_card_number(" ")
-    with pytest.raises(ValueError):
-        assert get_mask_card_number(card_number="")
-
-
-# @pytest.mark.parametrize('date, expected', '2018-07-11T02:26:18.671407', '11.07.2018')
-# def test_get_data(dates, expected):
-#     assert get_data(dates) == expected
+    # with pytest.raises(ValueError):
+    #     assert get_mask_card_number(card_number="")
 
 
 def test_dated(dates):
