@@ -1,15 +1,16 @@
 import json
 import logging
 
+
 logging.basicConfig(
     level=logging.DEBUG,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    filename="../logs/utils.log",
+    filename="/Users/maksbolomoznov/PycharmProjects/pythonProjectHw/logs/utils.log",
     encoding="utf8",  # Запись логов в файл
     filemode="w",
 )  # Перезапись файла при каждом запуске
 
-logger = logging.getLogger("app.operations")
+logger = logging.getLogger("utils.py")
 
 
 def get_operations(path: str) -> list[dict]:

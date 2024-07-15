@@ -1,136 +1,127 @@
-import os
+from src.decorators import log
+from src.generators import filter_by_currency
 from src.get_read_func import get_csv, get_exel
+from src.masks import get_mask_card_number
 from src.processing import filter_by_state, sort_by_date
+from src.search_trans import search_transactions
 from src.utils import get_operations
 from src.widget import get_data
-from src.search_trans import search_transactions
-from src.masks import get_mask_card_number
 
 
-def main() -> None:
-    """Функция, которая отвечает за основную логику проекта и связывает функции между собой."""
-    while True:
-        print(
-            """Привет! Добро пожаловать в программу работы с банковскими транзакциями.
-        Выберите необходимый пункт меню:
-        1. Получить информацию о транзакциях из JSON-файла
-        2. Получить информацию о транзакциях из CSV-файла
-        3. Получить информацию о транзакциях из XLSX-файла"""
-        )
-        user_file_choice = input().strip()
-        if user_file_choice == "1":
-            print("Выбран JSON-файл.")
-            list_transactions = get_operations(os.path.join("../data/operations.json"))
-            break
-        elif user_file_choice == "2":
-            print("Выбран CSV-файл.")
-            list_transactions = get_csv(os.path.join("../data/transactions.csv"))
-            break
-        elif user_file_choice == "3":
-            print("Выбран XLSX-файл.")
-            list_transactions = get_exel(os.path.join("../data/transactions_excel.xlsx"))
-            break
-        else:
-            print("Некорректный выбор. Попробуй еще раз.")
-            continue
+@log("logs/main_1.txt")
+def main() -> str:
+    greeting = """Привет! Добро пожаловать в программу работы
+с банковскими транзакциями.
+Выберите необходимый пункт меню:\n
+1. Получить информацию о транзакциях из JSON-файла
+2. Получить информацию о транзакциях из CSV-файла
+3. Получить информацию о транзакциях из XLSX-файла"""
+    input_user_file = input(f"{greeting}\n")
 
-    list_transactions: dict[str, str | bool] = {}
-    while True:
-        status = input(
-            "Введите статус, по которому необходимо выполнить фильтрацию. "
-            "Доступные для фильтровки статусы: EXECUTED, CANCELED, PENDING:\n"
-        ).upper()
-        if status in ["CANCELED", "PENDING", "EXECUTED"]:
-            list_transactions["status"] = status
-            print(f"Операции отфильтрованы по статусу {status}")
-            break
-        else:
-            print("Некорректный выбор. Попробуй еще раз.")
-            continue
-    while True:
-        sort_date = input("Отсортировать операции по дате?  Да/Нет\n").lower()
-        if sort_date == "да":
-            while True:
-                sorting_order = input(
-                    """Отсортировать по возрастанию или по убыванию? по возрастанию/по убыванию\n"""
-                ).lower()
-                if sorting_order == "по возрастанию":
-                    list_transactions["date"] = False
-                    break
-                elif sorting_order == "по убыванию":
-                    list_transactions["date"] = True
-                    break
-                else:
-                    print("Некорректно выбрал. Пробуй еще раз.")
-                    continue
-            break
-        elif sort_date == "нет":
-            break
-        else:
-            print("Некорректно выбрал. Пробуй еще раз.")
-            continue
-    while True:
-        sort_code = str(input("Выводить только рублевые транзакции? Да/Нет\n")).lower()
-        if sort_code == "да":
-            list_transactions["currency"] = "RUB"
-            break
-        elif sort_code == "нет":
-            break
-        else:
-            print("Некорректно выбрал. Пробуй еще раз.")
-            continue
-    while True:
-        user_input = input("Отфильтровать список транзакций по определенному слову в описании? Да/Нет:\n").lower()
-        if user_input == "да":
-            search = input("Видите слово для поиска: ")
-            list_transactions["description"] = search
-            break
-        elif user_input == "нет":
-            break
-        else:
-            print("Некорректно выбрал. Пробуй еще раз.")
-            continue
+    while input_user_file not in ["1", "2", "3"]:
+        print("\nВвели некорректный символ\nПопробуйте еще раз:")
+        input_user_file = input()
 
-    transactions = list_transactions
-    for filter_type, filter_value in list_transactions.items():
-        if filter_type == "status":
-            transactions = filter_by_state(transactions, filter_value)
-        elif filter_type == "date":
-            transactions = sort_by_date(transactions, filter_value)
-        elif filter_type == "currency":
-            transactions = [
-                txn
-                for txn in transactions
-                if txn.get("operationAmount", {}).get("currency", {}).get("code") == filter_value
-            ]
-        elif filter_type == "description":
-            transactions = search_transactions(transactions, filter_value)
+    else:
 
-    if not transactions:
-        print("Не найдено ни одной транзакции, подходящей под ваши условия фильтрации")
-        return
+        if input_user_file == "1":
+            print("\nДля обработки выбран JSON-файл.")
+            result = get_operations("/Users/maksbolomoznov/PycharmProjects/pythonProjectHw/data/operations.json")
 
-    print("Распечатываю итоговый список транзакций...")
-    print(f"Всего банковских операций в выборке: {len(transactions)}")
-    for transaction in transactions:
-        description = transaction.get("description")
-        if description == "Открытие вклада":
-            from_ = description
-        else:
-            from_ = get_mask_card_number(transaction.get("from"))
+        elif input_user_file == "2":
+            print("\nДля обработки выбран CSV-файл.")
+            result = get_csv("/Users/maksbolomoznov/PycharmProjects/pythonProjectHw/data/transactions.csv")
+        elif input_user_file == "3":
+            print("\nДля обработки выбран XLSX-файл.")
+            result = get_exel("/Users/maksbolomoznov/PycharmProjects/pythonProjectHw/data/transactions_excel.xlsx")
 
-        to_ = get_mask_card_number(transaction.get("to"))
-        date = get_data(transaction.get("date"))
+    next_choice_state = """\nВведите статус, по которому необходимо выполнить фильтрацию.
+Доступные для фильтровки статусы: EXECUTED, CANCELED, PENDING"""
+    input_user_state = input(f"{next_choice_state}\n").upper()
 
-        amount = transaction["operationAmount"]["amount"]
-        currency = transaction["operationAmount"]["currency"]["name"]
+    while input_user_state not in ["EXECUTED", "CANCELED", "PENDING"]:
+        print(f"\nСтатус операции {input_user_state} недоступен.\n{next_choice_state}")
+        input_user_state = input().upper()
 
-        if description == "Открытие вклада":
-            print(f"{date} {description}\nСчет {to_}\nСумма: {amount} {currency}\n")
-        else:
-            print(f"{date} {description}\n{from_} -> {to_}\nСумма: {amount} {currency}\n")
+    else:
+
+        if input_user_state == "EXECUTED":
+            print('\nОперации отфильтрованы по статусу "EXECUTED"')
+        elif input_user_state == "CANCELED":
+            print('\nОперации отфильтрованы по статусу "CANCELED"')
+        elif input_user_state == "PENDING":
+            print('\nОперации отфильтрованы по статусу "PENDING"')
+
+    result = filter_by_state(result, input_user_state)
+
+    next_choice_data = """\nОтсортировать операции по дате? Да/Нет"""
+    input_user_data = input(f"{next_choice_data}\n").lower()
+    while input_user_data not in ["да", "нет"]:
+        print("\nВвели некорректный символ\nПопробуйте еще раз:")
+        input_user_data = input(f"{next_choice_data}\n").lower()
+
+    else:
+
+        if input_user_data == "да":
+            next_choice_ascending = """\nОтсортировать по возрастанию или по убыванию?"""
+            input_user_ascending = input(f"{next_choice_ascending}\n").lower()
+
+            while input_user_ascending not in ["по возрастанию", "по убыванию"]:
+                print("\nВвели некорректную сортировку\nПопробуйте еще раз:")
+                input_user_ascending = input(f"{next_choice_ascending}\n").lower()
+
+            else:
+
+                if input_user_ascending == "по убыванию":
+                    result = sort_by_date(result)
+                    # -> list[dict]
+                elif input_user_ascending == "по возрастанию":
+                    result = sort_by_date(result, False)
+
+    next_choice_rub = """\nВыводить только рублевые тразакции? Да/Нет"""
+    input_user_rub = input(f"{next_choice_rub}\n").lower()
+    while input_user_rub not in ["да", "нет"]:
+        print("\nВвели некорректную сортировку\nПопробуйте еще раз:")
+        input_user_rub = input(f"{next_choice_rub}\n").lower()
+
+    else:
+
+        if input_user_rub == "да":
+            result = filter_by_currency(result, "RUB")
+
+    next_choice_word = """\nОтфильтровать список транзакций по определенному слову в описании? Да/Нет"""
+    input_user_word = input(f"{next_choice_word}\n").lower()
+    while input_user_word not in ["да", "нет"]:
+        print("\nВвели некорректную фильтрацию\nПопробуйте еще раз:")
+        input_user_word = input(f"{next_choice_word}\n").lower()
+    else:
+        if input_user_word == "да":
+            word_filter = input("Введите слово для поиска:\n")
+
+            if input_user_rub == "да":
+                list_result = [r for r in [*result]]
+                result = search_transactions([*result], word_filter)
+
+            else:
+                result = search_transactions(result, word_filter)
+
+    print("Распечатываю итоговый список транзакций...\n")
+    print(f"Всего банковских операций в выборке: {len(result)}")
+
+    if result is []:
+        return "Не найдено ни одной транзакции, подходящей под ваши условия фильтрации"
+    else:
+        for i in result:
+            data = get_data(i["date"])
+            description = i["description"]
+            from_ = get_mask_card_number(i.get("from", ""))
+            to_ = get_mask_card_number(i.get("to", ""))
+            amount = i["operationAmount"]["amount"]
+            name = i["operationAmount"]["currency"]["name"]
+
+            print(f"{data} {description}\n{from_} -> {to_}\nСумма: {amount} {name}\n")
+    return "finish"
 
 
 if __name__ == "__main__":
     main()
-

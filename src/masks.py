@@ -3,7 +3,7 @@ import logging
 logging.basicConfig(
     level=logging.DEBUG,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    filename="../logs/masks.log",
+    filename="/Users/maksbolomoznov/PycharmProjects/pythonProjectHw/logs/utils.log",
     encoding="utf8",  # Запись логов в файл
     filemode="w",
 )  # Перезапись файла при каждом запуске
@@ -46,7 +46,7 @@ def get_mask_card_number(card_number: str) -> str | None:
         masked_account = card_number[:4] + " " + "**" + card_number[-4:]
         auth_logger.debug("Ввод счёта, успешно")
         return masked_account
-    elif card_number ==  "":
+    elif card_number == "":
         raise ValueError
         auth_logger.warning("Ошибка ввода")
     return None
